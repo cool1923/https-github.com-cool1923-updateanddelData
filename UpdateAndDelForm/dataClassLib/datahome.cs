@@ -8,7 +8,7 @@ namespace UpdateAndDelForm.dataClassLib
 {
     class datahome
     {
-
+        public string ShowTemp { get; set; }
         public string measureNo { get; set; }
         public string terminalname { get; set; }
         //管理主机号

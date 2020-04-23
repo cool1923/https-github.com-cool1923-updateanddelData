@@ -1,11 +1,13 @@
 ﻿using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -72,7 +74,7 @@ namespace UpdateAndDelForm
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 filePath = openFileDialog.FileName;
-               // TCMET.Text = ExcelToTable(filePath);
+                ExcelToTable(filePath);
                 MessageBox.Show("提示：数据导入成功！");
             }
         }
@@ -87,7 +89,7 @@ namespace UpdateAndDelForm
         /// <returns></returns>
         public static string ExcelToTable(string file)
         {
-            List<datahome> ls_datahomes = new List<datahome>();
+            List<dataClassLib.datahome> ls_datahomes = new List<dataClassLib.datahome>();
             int ii = 0;
             DataTable dt = new DataTable();
             string cedian = "";
@@ -96,7 +98,7 @@ namespace UpdateAndDelForm
             using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read))
             {
                 //XSSFWorkbook 适用XLSX格式，HSSFWorkbook 适用XLS格式
-                if (fileExt == ".xlsx") { workbook = new HSSFWorkbook(fs); } else if (fileExt == ".xls") { workbook = new HSSFWorkbook(fs); } else { workbook = null; }
+                if (fileExt == ".xlsx") { workbook = new XSSFWorkbook(fs); } else if (fileExt == ".xls") { workbook = new HSSFWorkbook(fs); } else { workbook = null; }
                 if (workbook == null) { return null; }
                 ISheet sheet = workbook.GetSheetAt(0);
 
@@ -119,7 +121,7 @@ namespace UpdateAndDelForm
                 {
                     DataRow dr = dt.NewRow();
                     bool hasValue = false;
-                    datahome datahome = null;//一行数据
+                   dataClassLib.datahome datahome = new dataClassLib.datahome();//一行数据
                     foreach (int j in columns)
                     {
                         dr[j] = GetValueType(sheet.GetRow(i).GetCell(j));
@@ -131,11 +133,17 @@ namespace UpdateAndDelForm
                         {
                             if (j == 0)//主机时间1
                             {
-                                datahome.devicedate = dr[j].ToString();
+                                MessageBox.Show(DateTime.FromOADate(double.Parse(dr[j].ToString())).ToString());
+                                string sddate = DateTime.FromOADate(double.Parse(dr[j].ToString())).ToString();
+                                datahome.devicedate = sddate;
+                                datahome.sysdate = sddate;
+                                
                             }
                             else if (j == 1)//主机编号2
                             {
-                                datahome.managerID = dr[j].ToString();
+                                string sMeCode = Convert.ToDecimal(Convert.ToDouble(dr[j])).ToString();
+                                MessageBox.Show("主机编号："+sMeCode);
+                                datahome.managerID = sMeCode;
                             }
                             else if (j == 2)//测点名称3
                             {
@@ -169,22 +177,32 @@ namespace UpdateAndDelForm
                             {
                                 datahome.h_low = dr[j].ToString();
                             }
-                          
+                            else if (j == 10)//是否单双显
+                            {
+                                MessageBox.Show("是否单显：" + dr[j].ToString());
+                                datahome.ShowTemp = dr[j].ToString();
+                            }
 
 
-                          
+
+
 
 
                         }
                     }//一行各个列输入参数取完，开始赋给默认值
                     datahome.warnState = "0";
                     datahome.sign = "0";
-                    datahome.warnState = "1";
-                    datahome.measureMeterCode =datahome.managerID+"_"+datahome.meterNo;
+                    datahome.warnState = "0";
+                    datahome.warningistrue = "1";
+                    datahome.measureMeterCode =datahome.managerID+"_"+datahome.deviceNum;
+                    if (!string.IsNullOrWhiteSpace(datahome.devicedate))
+                    {
+                        ls_datahomes.Add(datahome);//增加一行数据
 
-                    ls_datahomes.Add(datahome);//增加一行数据
-
-                    
+                        dataClassLib.sqlOperation.insertIntoDataHome(ls_datahomes);
+                    }
+                    else {
+                        MessageBox.Show("已经到最后一行：" + i.ToString());break; ; }
                     //if (hasValue)
                     //{
                     //    if (ii == 0)
@@ -198,7 +216,7 @@ namespace UpdateAndDelForm
                     //    ii++;
                     //    //dt.Rows.Add(dr);
                     //}
-                    
+
 
                 }
             }
