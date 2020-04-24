@@ -144,5 +144,15 @@ namespace UpdateAndDelForm
             }
 
         }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (this.IsServiceExisted(serviceName)) this.ServiceStart(serviceName);
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (this.IsServiceExisted(serviceName)) this.ServiceStop(serviceName);
+        }
     }
 }
