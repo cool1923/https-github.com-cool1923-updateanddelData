@@ -101,7 +101,7 @@ namespace UpdateAndDelForm
         #region  执行简单SQL语句
         public static DataSet QueryPTLQ(string SQLString)
         {
-            using (MySql.Data.MySqlClient.MySqlConnection connection =new MySql.Data.MySqlClient.MySqlConnection (LQPTconnectionString))
+            using (MySql.Data.MySqlClient.MySqlConnection connection =new MySql.Data.MySqlClient.MySqlConnection (connectionString))
             {
                 DataSet ds = new DataSet();
                 try

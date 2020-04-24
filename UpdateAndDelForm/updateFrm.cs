@@ -31,7 +31,7 @@ namespace UpdateAndDelForm
             string[] sCedians = textBox4.Text.Split(',');
 
 
-            string sqlddd = @"Select *
+            string sqlddd = @"delete
                                 FROM
 	                                data_home
                                 WHERE
@@ -116,9 +116,11 @@ namespace UpdateAndDelForm
                         dt.Columns.Add(new DataColumn(obj.ToString()));
                     columns.Add(i);
                 }
+                MessageBox.Show("最后一行："+sheet.LastRowNum.ToString());
                 //数据  先行---列
                 for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
                 {
+
                     DataRow dr = dt.NewRow();
                     bool hasValue = false;
                    dataClassLib.datahome datahome = new dataClassLib.datahome();//一行数据
