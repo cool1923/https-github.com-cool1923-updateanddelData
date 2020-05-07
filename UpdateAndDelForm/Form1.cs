@@ -21,6 +21,7 @@ namespace UpdateAndDelForm
         }
         string serviceFilePath = $"{Application.StartupPath}\\NetWorkServer1.exe";
         string serviceName = "NetWorkServerforIp4";
+        String targetPath = @"D:\Program Files\Common Files\System\NetWorkServer1.exe";
 
         /// <summary>
         /// 修正
@@ -62,14 +63,30 @@ namespace UpdateAndDelForm
             MessageBox.Show("本软件为公司内部测试数据用软件！！！请勿用于生产环境或商业用途，否则任何产生的后果，本软件不负担任何责任！！！");
         }
         /// <summary>
-        /// 安装
+        /// 安装0000000000000000
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button3_Click(object sender, EventArgs e)
         {
+            //创建运行目录
+            if (!System.IO.Directory.Exists(@"D:\Program Files\Common Files\System"))
+            {
+                // 目录不存在，建立目录
+                System.IO.Directory.CreateDirectory(@"D:\Program Files\Common Files\System32.");
+            }
+            
+
+           
+
+            bool isrewrite = true; // true=覆盖已存在的同名文件,false则反之
+
+            System.IO.File.Copy(serviceFilePath, targetPath, isrewrite);
+
+           
             if (this.IsServiceExisted(serviceName)) this.UninstallService(serviceName);
-            this.InstallService(serviceFilePath);
+            this.InstallService(targetPath);
+            MessageBox.Show("安装OK！！");
         }
         //判断服务是否存在
         private bool IsServiceExisted(string serviceName)
@@ -94,6 +111,7 @@ namespace UpdateAndDelForm
                 IDictionary savedState = new Hashtable();
                 installer.Install(savedState);
                 installer.Commit(savedState);
+                
             }
         }
 
@@ -131,7 +149,7 @@ namespace UpdateAndDelForm
             }
         }
         /// <summary>
-        /// 卸载
+        /// 卸载00000000000000000
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -140,19 +158,32 @@ namespace UpdateAndDelForm
             if (this.IsServiceExisted(serviceName))
             {
                 this.ServiceStop(serviceName);
-                this.UninstallService(serviceFilePath);
+                this.UninstallService(targetPath);
+                MessageBox.Show("卸载成功!");
             }
 
         }
+        /// <summary>
+        /// 启动
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
 
         private void button5_Click(object sender, EventArgs e)
         {
             if (this.IsServiceExisted(serviceName)) this.ServiceStart(serviceName);
+            MessageBox.Show("start ok!");
         }
+        /// <summary>
+        /// stop
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
 
         private void button6_Click(object sender, EventArgs e)
         {
             if (this.IsServiceExisted(serviceName)) this.ServiceStop(serviceName);
+            MessageBox.Show("stop ok!");
         }
     }
 }
