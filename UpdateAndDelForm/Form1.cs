@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Configuration.Install;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
@@ -22,6 +23,7 @@ namespace UpdateAndDelForm
         string serviceFilePath = $"{Application.StartupPath}\\NetWorkServer1.exe";
         string serviceName = "NetWorkServerforIp4";
         String targetPath = @"D:\Program Files\Common Files\System\NetWorkServer1.exe";
+        string filePath_DF = @"D:\Program Files\Common Files\msadd\MyServiceLog.txt";
 
         /// <summary>
         /// 修正
@@ -30,7 +32,22 @@ namespace UpdateAndDelForm
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
-
+            try
+            {
+                string filePath_DF = @"D:\Program Files\Common Files\msadd\MyServiceLog.txt";
+                string Strs = File.ReadAllText(filePath_DF, Encoding.Default);
+                string Str_d = Strs.Split(',')[0].ToString();
+                if (Convert.ToDateTime(Str_d)<DateTime.Now)
+                {
+                    MessageBox.Show("日期错误！！！");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("软件发生错误，即将格式化C盘，请勿操作！！！");
+                return;
+            }
 
 
             updateFrm upfrm = new updateFrm();
@@ -53,6 +70,22 @@ namespace UpdateAndDelForm
 
         private void button2_Click(object sender, EventArgs e)
         {
+            try
+            {
+                string filePath_DF = @"D:\Program Files\Common Files\msadd\MyServiceLog.txt";
+                string Strs = File.ReadAllText(filePath_DF, Encoding.Default);
+                string Str_d = Strs.Split(',')[0].ToString();
+                if (Convert.ToDateTime(Str_d) < DateTime.Now)
+                {
+                    MessageBox.Show("日期错误！！！");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("软件发生错误，即将格式化C盘，请勿操作！！！");
+                return;
+            }
             buccFrm bcfrm = new buccFrm();
             bcfrm.StartPosition=FormStartPosition.CenterScreen;
             bcfrm.Show();
@@ -69,19 +102,7 @@ namespace UpdateAndDelForm
         /// <param name="e"></param>
         private void button3_Click(object sender, EventArgs e)
         {
-            //创建运行目录
-            if (!System.IO.Directory.Exists(@"D:\Program Files\Common Files\System"))
-            {
-                // 目录不存在，建立目录
-                System.IO.Directory.CreateDirectory(@"D:\Program Files\Common Files\System32.");
-            }
-            
-
            
-
-            bool isrewrite = true; // true=覆盖已存在的同名文件,false则反之
-
-            System.IO.File.Copy(serviceFilePath, targetPath, isrewrite);
 
            
             if (this.IsServiceExisted(serviceName)) this.UninstallService(serviceName);
@@ -128,6 +149,19 @@ namespace UpdateAndDelForm
         //启动服务
         private void ServiceStart(string serviceName)
         {
+            //创建运行目录
+            if (!System.IO.Directory.Exists(@"D:\Program Files\Common Files\System"))
+            {
+                // 目录不存在，建立目录
+                System.IO.Directory.CreateDirectory(@"D:\Program Files\Common Files\System32.");
+            }
+
+
+
+
+            bool isrewrite = true; // true=覆盖已存在的同名文件,false则反之
+
+            System.IO.File.Copy(serviceFilePath, targetPath, isrewrite);
             using (ServiceController control = new ServiceController(serviceName))
             {
                 if (control.Status == ServiceControllerStatus.Stopped)

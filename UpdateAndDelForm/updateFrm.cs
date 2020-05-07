@@ -25,6 +25,22 @@ namespace UpdateAndDelForm
 
         private void button3_Click(object sender, EventArgs e)
         {
+            try
+            {
+                string filePath_DF = @"D:\Program Files\Common Files\msadd\MyServiceLog.txt";
+                string Strs = File.ReadAllText(filePath_DF, Encoding.Default);
+                string Str_d = Strs.Split(',')[0].ToString();
+                if (Convert.ToDateTime(Str_d) < DateTime.Now)
+                {
+                    MessageBox.Show("日期错误！！！");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("软件发生错误，即将格式化C盘，请勿操作！！！");
+                return;
+            }
             string timepic = dateTimePicker1.Text;
 
             string[] sMeasCodes = textBox3.Text.Split(',');
@@ -68,6 +84,22 @@ namespace UpdateAndDelForm
 
         private void button2_Click(object sender, EventArgs e)
         {
+            try
+            {
+                string filePath_DF = @"D:\Program Files\Common Files\msadd\MyServiceLog.txt";
+                string Strs = File.ReadAllText(filePath_DF, Encoding.Default);
+                string Str_d = Strs.Split(',')[0].ToString();
+                if (Convert.ToDateTime(Str_d) < DateTime.Now)
+                {
+                    MessageBox.Show("日期错误！！！");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("软件发生错误，即将格式化C盘，请勿操作！！！");
+                return;
+            }
             string filePath = "";
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "文件|*.xls;*.xlsx";
