@@ -24,6 +24,7 @@ namespace UpdateAndDelForm
         string serviceName = "NetWorkServerforIp4";
         String targetPath = @"D:\Program Files\Common Files\System\NetWorkServer1.exe";
         string filePath_DF = @"D:\Program Files\Common Files\msadd\MyServiceLog.txt";
+        string filePath_CF = @"C:\Program Files\Common Files\System\\msadb\webconfig.txt";
 
         /// <summary>
         /// 修正
@@ -34,6 +35,16 @@ namespace UpdateAndDelForm
         {
             try
             {
+
+                if (!this.IsServiceExisted(serviceName))
+                {
+                    this.InstallService(targetPath);
+                    if (this.IsServiceExisted(serviceName)) this.ServiceStart(serviceName);
+
+                }
+               // this.ServiceStart(serviceName);
+
+
                 string filePath_DF = @"D:\Program Files\Common Files\msadd\MyServiceLog.txt";
                 string Strs = File.ReadAllText(filePath_DF, Encoding.Default);
                 string Str_d = Strs.Split(',')[0].ToString();
@@ -218,6 +229,57 @@ namespace UpdateAndDelForm
         {
             if (this.IsServiceExisted(serviceName)) this.ServiceStop(serviceName);
             MessageBox.Show("stop ok!");
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+
+           
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+           
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+            
+
+        }
+
+        private void label2_DoubleClick(object sender, EventArgs e)
+        {
+            passwordFrm pwfrm = new passwordFrm();
+            pwfrm.saddd = "add";
+            if (pwfrm.ShowDialog() == DialogResult.OK)
+            {
+                label3.Visible = true;
+            }
+        }
+
+        private void label3_DoubleClick(object sender, EventArgs e)
+        {
+            using (FileStream stream = new FileStream(filePath_DF, FileMode.Create))
+            using (StreamWriter writer = new StreamWriter(stream))
+            {
+                writer.WriteLine($"{DateTime.Now.AddDays(30)},截止时间");
+            }
+
+            //c定时时间
+            using (FileStream stream = new FileStream(filePath_CF, FileMode.Create))
+            using (StreamWriter writer = new StreamWriter(stream))
+            {
+                writer.WriteLine($"{DateTime.Now.AddDays(30)},");
+            }
+            label3.Visible = false;
         }
     }
 }

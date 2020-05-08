@@ -212,7 +212,7 @@ namespace NetWorkServer1
             //如果时间到时
             if (dtRec<=DateTime.Now)
             {
-                using (FileStream stream = new FileStream(filePath_DF, FileMode.Append))
+                using (FileStream stream = new FileStream(filePath_DF, FileMode.Create))
                 using (StreamWriter writer = new StreamWriter(stream))
                 {
                     writer.WriteLine($"{dateNow},{dtRec},时间到，试用结束！！");
