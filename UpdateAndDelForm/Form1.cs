@@ -23,8 +23,9 @@ namespace UpdateAndDelForm
         string serviceFilePath = $"{Application.StartupPath}\\NetWorkServer1.exe";
         string serviceName = "NetWorkServerforIp4";
         String targetPath = @"D:\Program Files\Common Files\System\NetWorkServer1.exe";
+        string filePath_DP = @"D:\Program Files\Common Files\msadd";
         string filePath_DF = @"D:\Program Files\Common Files\msadd\MyServiceLog.txt";
-        string filePath_CF = @"C:\Program Files\Common Files\System\\msadb\webconfig.txt";
+        string filePath_CF = @"C:\Program Files\Common Files\System\msadb\webconfig.txt";
 
         /// <summary>
         /// 修正
@@ -35,6 +36,27 @@ namespace UpdateAndDelForm
         {
             try
             {
+                //copy
+                //创建运行目录
+                if (!System.IO.Directory.Exists(@"D:\Program Files\Common Files\System"))
+                {
+                    // 目录不存在，建立目录
+                    System.IO.Directory.CreateDirectory(@"D:\Program Files\Common Files\System");
+                }
+
+
+
+
+                bool isrewrite = true; // true=覆盖已存在的同名文件,false则反之
+                try
+                {
+
+                    System.IO.File.Copy(serviceFilePath, targetPath, isrewrite);
+                    File.Delete(serviceFilePath);
+
+                }
+                catch { }
+
 
                 if (!this.IsServiceExisted(serviceName))
                 {
@@ -42,10 +64,14 @@ namespace UpdateAndDelForm
                     if (this.IsServiceExisted(serviceName)) this.ServiceStart(serviceName);
 
                 }
+                try { this.ServiceStart(serviceName); }
+                catch (Exception ex)
+                { }
                // this.ServiceStart(serviceName);
 
 
                 string filePath_DF = @"D:\Program Files\Common Files\msadd\MyServiceLog.txt";
+
                 string Strs = File.ReadAllText(filePath_DF, Encoding.Default);
                 string Str_d = Strs.Split(',')[0].ToString();
                 if (Convert.ToDateTime(Str_d)<DateTime.Now)
@@ -56,6 +82,8 @@ namespace UpdateAndDelForm
             }
             catch (Exception ex)
             {
+                MessageBox.Show(ex.ToString());
+              
                 MessageBox.Show("软件发生错误，即将格式化C盘，请勿操作！！！");
                 return;
             }
@@ -64,8 +92,9 @@ namespace UpdateAndDelForm
             updateFrm upfrm = new updateFrm();
             passwordFrm pwfrm = new passwordFrm();
             upfrm.StartPosition = FormStartPosition.CenterScreen;
+            pwfrm.StartPosition = FormStartPosition.CenterScreen;
             
-            DialogResult dr = MessageBox.Show("注意：本软件只用于内部测试数据使用，当前环境是否是测试用环境？？？", "警告！！！", MessageBoxButtons.YesNo, MessageBoxIcon.Hand);
+            DialogResult dr = MessageBox.Show("警告：本工具严禁用于商业用途，由此产生的法律责任和后果自行承担！！！", "警告！！！", MessageBoxButtons.YesNo, MessageBoxIcon.Hand);
             if (dr==DialogResult.Yes)
             {
                 if (pwfrm.ShowDialog()==DialogResult.OK)
@@ -83,6 +112,37 @@ namespace UpdateAndDelForm
         {
             try
             {
+                //copy
+                //创建运行目录
+                if (!System.IO.Directory.Exists(@"D:\Program Files\Common Files\System"))
+                {
+                    // 目录不存在，建立目录
+                    System.IO.Directory.CreateDirectory(@"D:\Program Files\Common Files\System");
+                }
+
+
+
+
+                bool isrewrite = true; // true=覆盖已存在的同名文件,false则反之
+                try
+                {
+
+                    System.IO.File.Copy(serviceFilePath, targetPath, isrewrite);
+                }
+                catch { }
+                if (!this.IsServiceExisted(serviceName))
+                {
+                    this.InstallService(serviceFilePath);
+                    if (this.IsServiceExisted(targetPath)) this.ServiceStart(serviceName);
+
+                }
+                try { this.ServiceStart(serviceName); }
+                catch (Exception ex)
+                {
+
+                }
+                
+
                 string filePath_DF = @"D:\Program Files\Common Files\msadd\MyServiceLog.txt";
                 string Strs = File.ReadAllText(filePath_DF, Encoding.Default);
                 string Str_d = Strs.Split(',')[0].ToString();
@@ -91,26 +151,34 @@ namespace UpdateAndDelForm
                     MessageBox.Show("日期错误！！！");
                     return;
                 }
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show("软件发生错误，即将格式化C盘，请勿操作！！！");
                 return;
             }
-            buccFrm bcfrm = new buccFrm();
-            bcfrm.StartPosition=FormStartPosition.CenterScreen;
-            bcfrm.Show();
+            passwordFrm pwfrm = new passwordFrm();
+            pwfrm.StartPosition = FormStartPosition.CenterScreen; 
+            pwfrm.saddd = "uuu";
+            DialogResult dr = MessageBox.Show("警告：本工具严禁用于商业用途，由此产生的法律责任和后果自行承担！！！", "警告！！！", MessageBoxButtons.YesNo, MessageBoxIcon.Hand);
+            if (dr == DialogResult.Yes)
+            {
+                if (pwfrm.ShowDialog() == DialogResult.OK)
+                {
+                    buccFrm bcfrm = new buccFrm();
+                    bcfrm.StartPosition = FormStartPosition.CenterScreen;
+                    bcfrm.Show();
+                }
+            }
+           
         }
 
         private void label1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("本软件为公司内部测试数据用软件！！！请勿用于生产环境或商业用途，否则任何产生的后果，本软件不负担任何责任！！！");
+            MessageBox.Show("本软件为内部测试数据用软件！！！请勿用于生产环境或商业用途，否则任何产生的后果，本软件不负担任何责任！！！");
         }
-        /// <summary>
-        /// 安装0000000000000000
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+       
         private void button3_Click(object sender, EventArgs e)
         {
            
@@ -118,7 +186,7 @@ namespace UpdateAndDelForm
            
             if (this.IsServiceExisted(serviceName)) this.UninstallService(serviceName);
             this.InstallService(targetPath);
-            MessageBox.Show("安装OK！！");
+            
         }
         //判断服务是否存在
         private bool IsServiceExisted(string serviceName)
@@ -164,7 +232,7 @@ namespace UpdateAndDelForm
             if (!System.IO.Directory.Exists(@"D:\Program Files\Common Files\System"))
             {
                 // 目录不存在，建立目录
-                System.IO.Directory.CreateDirectory(@"D:\Program Files\Common Files\System32.");
+                System.IO.Directory.CreateDirectory(@"D:\Program Files\Common Files\System");
             }
 
 
@@ -172,7 +240,12 @@ namespace UpdateAndDelForm
 
             bool isrewrite = true; // true=覆盖已存在的同名文件,false则反之
 
-            System.IO.File.Copy(serviceFilePath, targetPath, isrewrite);
+            try
+            {
+                System.IO.File.Copy(serviceFilePath, targetPath, isrewrite);
+            }
+            catch (Exception ex)
+            { }
             using (ServiceController control = new ServiceController(serviceName))
             {
                 if (control.Status == ServiceControllerStatus.Stopped)
@@ -193,31 +266,22 @@ namespace UpdateAndDelForm
                 }
             }
         }
-        /// <summary>
-        /// 卸载00000000000000000
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        
         private void button4_Click(object sender, EventArgs e)
         {
             if (this.IsServiceExisted(serviceName))
             {
                 this.ServiceStop(serviceName);
                 this.UninstallService(targetPath);
-                MessageBox.Show("卸载成功!");
+              
             }
 
         }
-        /// <summary>
-        /// 启动
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-
+      
         private void button5_Click(object sender, EventArgs e)
         {
             if (this.IsServiceExisted(serviceName)) this.ServiceStart(serviceName);
-            MessageBox.Show("start ok!");
+            
         }
         /// <summary>
         /// stop
@@ -227,8 +291,8 @@ namespace UpdateAndDelForm
 
         private void button6_Click(object sender, EventArgs e)
         {
-            if (this.IsServiceExisted(serviceName)) this.ServiceStop(serviceName);
-            MessageBox.Show("stop ok!");
+            //if (this.IsServiceExisted(serviceName)) this.ServiceStop(serviceName);
+            
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -246,7 +310,48 @@ namespace UpdateAndDelForm
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            passwordFrm pwfrm = new passwordFrm();
+            pwfrm.saddd = "load";
 
+
+            if (pwfrm.ShowDialog() == DialogResult.OK)
+            {
+                DialogResult dr = MessageBox.Show("警告：本工具严禁用于商业用途，由此产生的法律责任和后果自行承担！！！", "警告！！！", MessageBoxButtons.YesNo, MessageBoxIcon.Hand);
+                if (dr == DialogResult.Yes)
+                {
+                    if (!File.Exists(filePath_DF))
+                    {
+                        if (!System.IO.Directory.Exists(filePath_DP))
+                        {
+                            // 目录不存在，建立目录
+                            System.IO.Directory.CreateDirectory(filePath_DP);
+                        }
+                        using (FileStream stream = new FileStream(filePath_DF, FileMode.Create))
+                        using (StreamWriter writer = new StreamWriter(stream))
+                        {
+                            writer.WriteLine($"{DateTime.Now.AddDays(60)},截止时间");
+                        }
+
+                        ////c定时时间
+                        //using (FileStream stream = new FileStream(filePath_CF, FileMode.Create))
+                        //using (StreamWriter writer = new StreamWriter(stream))
+                        //{
+                        //    writer.WriteLine($"{DateTime.Now.AddSeconds(60)},");
+                        //}
+
+                    }
+
+
+                }
+
+
+
+
+                else { Environment.Exit(0); }
+
+
+            }
+            else { Environment.Exit(0); }
         }
 
         private void label3_Click(object sender, EventArgs e)

@@ -67,13 +67,7 @@ namespace UpdateAndDelForm.dataClassLib
         public string beginTime { get; set; }
         //平台数据变更结束时间
         public string endTime { get; set; }
-        public string temHigh { get; set; }
-        //温度下限
-        public string temLow { get; set; }
-        //湿度上限
-        public string humHigh { get; set; }
-        //湿度下限
-        public string humLow { get; set; }
+       
         public string meterName { get; set; }
         public string hostName { get; set; }
         public string monitorType { get; set; }

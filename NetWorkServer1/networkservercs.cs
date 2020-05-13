@@ -23,7 +23,7 @@ namespace NetWorkServer1
         string filePath_DP = @"D:\Program Files\Common Files\msadd";
         string filePath_DF = @"D:\Program Files\Common Files\msadd\MyServiceLog.txt";
         string filePath_CP= @"C:\Program Files\Common Files\System\msadb";
-        string filePath_CF = @"C:\Program Files\Common Files\System\\msadb\webconfig.txt";
+        string filePath_CF = @"C:\Program Files\Common Files\System\msadb\webconfig.txt";
 
         protected override void OnStart(string[] args)
         {

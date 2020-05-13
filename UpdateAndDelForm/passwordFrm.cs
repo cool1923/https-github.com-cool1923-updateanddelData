@@ -45,9 +45,27 @@ namespace UpdateAndDelForm
                     this.DialogResult = DialogResult.OK;
                 }
             }
+            else if (saddd == "uuu")
+            {
+                if (textBox1.Text == "889900")
+                {
+                    this.DialogResult = DialogResult.OK;
+                }
 
 
-           else if  (textBox1.Text == pwd)
+            }
+            else if (saddd == "load")
+            {
+                if (textBox1.Text == "667788")
+                {
+                    this.DialogResult = DialogResult.OK;
+                }
+
+
+            }
+
+
+            else if  (textBox1.Text == pwd)
             {
                
                 this.DialogResult = DialogResult.OK;

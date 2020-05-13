@@ -31,7 +31,7 @@ namespace UpdateAndDelForm.dataClassLib
         /// <param name="listLishi">报警</param>
         /// <param name="sendStr"></param>
 
-        public static void insertIntoDataHome(List<datahome> list)
+        public static void insertIntoDataHome(List<datahome> list, List<datahome> listLishi)
         {
             string id;
             String sql1 = "";
@@ -122,6 +122,66 @@ namespace UpdateAndDelForm.dataClassLib
 
                 
             }
+            //历史报警
+            if (listLishi != null && listLishi.Count > 0)
+            {
+                sql1 += ";insert into lb_warning_data(id,measureCode,meterNo,devtime,temperature,humidity,lng,lat,createDate,warnState,measureMeterCode,warningistrue,carinterval,houseinterval,mcc,t_high,t_low,h_high,h_low,measureNo,terminalname) values ";
+                for (int j = 0; j < listLishi.Count; j++)
+                {
+                    id = GetNewId();
+                    string ShowTemp = list[j].ShowTemp;
+                    string measureCodea = listLishi[j].managerID;//管理主机编号
+                    string meterNo = listLishi[j].deviceNum;//管理主机的仪表编号
+                    //String sqlli = "select ShowSingleTemp FROM lb_device_information where measureCode='" + measureCodea + "' and meterNo='" + meterNo + "' ";//查询语句
+                    //object ShowTemp = DbHelperMySQL.GetSingle(sqlli);//返回一个查询对象结果（字段的值）
+
+                    if (ShowTemp.ToString() != "1")
+                    {
+                        if (j > 0)
+                        {
+                            sql1 += " , ('" + id + "','" + listLishi[j].managerID + "', '" + listLishi[j].deviceNum + "','" + listLishi[j].devicedate + "','"
+                                + listLishi[j].temperature + "','" + listLishi[j].humidity + "','" + listLishi[j].lng + "','" + listLishi[j].lat + "','"
+                                + listLishi[j].sysdate + "','" + listLishi[j].warnState + "','" + listLishi[j].measureMeterCode + "','"
+                                + listLishi[j].warningistrue + "','','',(select housetype from lb_device_information where measureCode = '"
+                                + listLishi[j].managerID + "' and meterNo = '" + listLishi[j].deviceNum + "')," + listLishi[j].t_high + "," + listLishi[j].t_low + ","
+                                + listLishi[j].h_high + "," + listLishi[j].h_low + ",'" + listLishi[j].measureNo + "','" + listLishi[j].terminalname + "')";
+                        }
+                        else
+                        {
+                            sql1 += "('" + id + "','" + listLishi[j].managerID + "', '" + listLishi[j].deviceNum + "','" + listLishi[j].devicedate + "','"
+                                + listLishi[j].temperature + "','" + listLishi[j].humidity + "','" + listLishi[j].lng + "','" + listLishi[j].lat + "','"
+                                + listLishi[j].sysdate + "','" + listLishi[j].warnState + "','" + listLishi[j].measureMeterCode + "','"
+                                + listLishi[j].warningistrue + "','','',(select housetype from lb_device_information where measureCode = '"
+                                + listLishi[j].managerID + "' and meterNo = '" + listLishi[j].deviceNum + "')," + listLishi[j].t_high + "," + listLishi[j].t_low + ","
+                                + listLishi[j].h_high + "," + listLishi[j].h_low + ",'" + listLishi[j].measureNo + "','" + listLishi[j].terminalname + "')";
+                        }
+                    }
+                    else
+                    {
+                        if (j > 0)
+                        {
+                            sql1 += " , ('" + id + "','" + listLishi[j].managerID + "', '" + listLishi[j].deviceNum + "','" + listLishi[j].devicedate + "','"
+                                + listLishi[j].temperature + "',null,'" + listLishi[j].lng + "','" + listLishi[j].lat + "','"
+                                + listLishi[j].sysdate + "','" + listLishi[j].warnState + "','" + listLishi[j].measureMeterCode + "','"
+                                + listLishi[j].warningistrue + "','','',(select housetype from lb_device_information where measureCode = '"
+                                + listLishi[j].managerID + "' and meterNo = '" + listLishi[j].deviceNum + "')," + listLishi[j].t_high + ","
+                                + listLishi[j].t_low + ",null,null,'" + listLishi[j].measureNo + "','" + listLishi[j].terminalname + "')";
+                        }
+                        else
+                        {
+                            sql1 += "('" + id + "','" + listLishi[j].managerID + "', '" + listLishi[j].deviceNum + "','" + listLishi[j].devicedate + "','"
+                                + listLishi[j].temperature + "','" + listLishi[j].humidity + "','" + listLishi[j].lng + "','" + listLishi[j].lat + "','"
+                                + listLishi[j].sysdate + "','" + listLishi[j].warnState + "','" + listLishi[j].measureMeterCode + "','"
+                                + listLishi[j].warningistrue + "','','',(select housetype from lb_device_information where measureCode = '"
+                                + listLishi[j].managerID + "' and meterNo = '" + listLishi[j].deviceNum + "')," + listLishi[j].t_high + "," + listLishi[j].t_low
+                                + ",null,null,'" + listLishi[j].measureNo + "','" + listLishi[j].terminalname + "')";
+                        }
+                    }
+
+                }
+
+            }
+        
 
 
             

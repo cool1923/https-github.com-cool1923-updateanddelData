@@ -79,11 +79,11 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 220);
+            this.button1.Location = new System.Drawing.Point(99, 220);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(76, 30);
             this.button1.TabIndex = 6;
-            this.button1.Text = "浏览";
+            this.button1.Text = "打开数据表";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -100,17 +100,17 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(16, 205);
+            this.label4.Location = new System.Drawing.Point(11, 202);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(41, 12);
+            this.label4.Size = new System.Drawing.Size(17, 12);
             this.label4.TabIndex = 8;
-            this.label4.Text = "label4";
+            this.label4.Text = "：";
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(121, 194);
+            this.button3.Location = new System.Drawing.Point(1, 220);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.Size = new System.Drawing.Size(76, 30);
             this.button3.TabIndex = 9;
             this.button3.Text = "清除";
             this.button3.UseVisualStyleBackColor = true;

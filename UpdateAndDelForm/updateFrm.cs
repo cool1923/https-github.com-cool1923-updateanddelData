@@ -57,16 +57,34 @@ namespace UpdateAndDelForm
 		                                FROM
 			                                lb_managehost_info
 		                                WHERE
-			                                measureCode IN ("+textBox3.Text+")"+
+			                                measureCode IN ('"+textBox3.Text+"')"+
 	                                ") AND devtime BETWEEN '"+ dateTimePicker1.Text+"'"
                                 + " AND '"+ dateTimePicker2.Text+ "'";
             if (!string.IsNullOrWhiteSpace(textBox4.Text))
             {
                 sqlddd += " and meterNo in ("+textBox4.Text+")";
             }
-            
+            string sqlwrd = @"delete
+                                FROM
+	                                lb_warning_data
+                                WHERE
+	                                measureNo IN (
+		                                SELECT
+			                                measureNo
+		                                FROM
+			                                lb_managehost_info
+		                                WHERE
+			                                measureCode IN ('" + textBox3.Text + "')" +
+                                    ") AND devtime BETWEEN '" + dateTimePicker1.Text + "'"
+                                + " AND '" + dateTimePicker2.Text + "'";
+            if (!string.IsNullOrWhiteSpace(textBox4.Text))
+            {
+                sqlwrd += " and meterNo in (" + textBox4.Text + ")";
+            }
+
 
             int iSelect = DbHelperMySQL.ExecuteStranSql(sqlddd);
+            int iWaring = DbHelperMySQL.ExecuteStranSql(sqlwrd);
             if (iSelect == -1)
             {
                 MessageBox.Show("未查找到有效数据！！！");
@@ -122,6 +140,7 @@ namespace UpdateAndDelForm
         public static string ExcelToTable(string file)
         {
             List<dataClassLib.datahome> ls_datahomes = new List<dataClassLib.datahome>();
+            List<dataClassLib.datahome> ls_warndatas= new List<dataClassLib.datahome>();
             int ii = 0;
             DataTable dt = new DataTable();
             string cedian = "";
@@ -156,6 +175,8 @@ namespace UpdateAndDelForm
                     DataRow dr = dt.NewRow();
                     bool hasValue = false;
                    dataClassLib.datahome datahome = new dataClassLib.datahome();//一行数据
+                    dataClassLib.datahome waringdata = new dataClassLib.datahome();//报警一行数据
+                   
                     foreach (int j in columns)
                     {
                         dr[j] = GetValueType(sheet.GetRow(i).GetCell(j));
@@ -167,16 +188,31 @@ namespace UpdateAndDelForm
                         {
                             if (j == 0)//主机时间1
                             {
-                                MessageBox.Show(DateTime.FromOADate(double.Parse(dr[j].ToString())).ToString());
+                               // MessageBox.Show(DateTime.FromOADate(double.Parse(dr[j].ToString())).ToString());
                                 string sddate = DateTime.FromOADate(double.Parse(dr[j].ToString())).ToString();
                                 datahome.devicedate = sddate;
-                                datahome.sysdate = sddate;
+                                try
+                                {
+                                    datahome.sysdate = Convert.ToDateTime(sddate).AddSeconds(30).ToString();
+                                }
+                                catch (Exception ex)
+                                {
+                                    datahome.sysdate = sddate;
+                                }
                                 
                             }
                             else if (j == 1)//主机编号2
                             {
-                                string sMeCode = Convert.ToDecimal(Convert.ToDouble(dr[j])).ToString();
-                                MessageBox.Show("主机编号："+sMeCode);
+                                string sMeCode = "";
+                                try
+                                {
+                                    sMeCode = Convert.ToDecimal(Convert.ToDouble(dr[j])).ToString();
+                                }
+                                catch (Exception ex)
+                                {
+                                    sMeCode = dr[j].ToString();
+                                }
+                               // MessageBox.Show("主机编号："+sMeCode);
                                 datahome.managerID = sMeCode;
                             }
                             else if (j == 2)//测点名称3
@@ -211,9 +247,14 @@ namespace UpdateAndDelForm
                             {
                                 datahome.h_low = dr[j].ToString();
                             }
-                            else if (j == 10)//是否单双显
+                            else if (j == 10)//断电报警
                             {
-                                MessageBox.Show("是否单显：" + dr[j].ToString());
+                               
+                                datahome.warnState = dr[j].ToString();
+                            }
+                            else if (j == 11)//是否单双显
+                            {
+                               // MessageBox.Show("是否单显：" + dr[j].ToString());
                                 datahome.ShowTemp = dr[j].ToString();
                             }
 
@@ -224,16 +265,55 @@ namespace UpdateAndDelForm
 
                         }
                     }//一行各个列输入参数取完，开始赋给默认值
-                    datahome.warnState = "0";
+                   // datahome.warnState = "0";
                     datahome.sign = "0";
-                    datahome.warnState = "0";
-                    datahome.warningistrue = "1";
+                    //datahome.warnState = "0";
+                   // datahome.warningistrue = "1";
                     datahome.measureMeterCode =datahome.managerID+"_"+datahome.deviceNum;
+                    double tt =Convert.ToDouble( datahome.temperature);
+                    double t1= Convert.ToDouble(datahome.t_high);
+                    double t2 = Convert.ToDouble(datahome.t_low);
+                    double hh = Convert.ToDouble(datahome.humidity);
+                    double h1 = Convert.ToDouble(datahome.h_high);
+                    double h2 = Convert.ToDouble(datahome.h_low);
+                   
+
+                    #region 报警判断
+                    if ((tt > t1 || tt < t2) && hh <= h1 && hh >= h2)
+                    {
+                        //温度超标
+                        datahome.warningistrue = "2";
+                    }
+                    else if (tt <= t1 && tt >= t2 && (hh > h1 || hh < h2))
+                    {
+                        //湿度超标
+                        datahome.warningistrue = "3";
+                    }
+                    else if ((tt > t1 || tt < t2) && (hh > h1 || hh < h2))
+                    {
+                        //湿度湿度超标
+                        datahome.warningistrue = "4";
+                    }
+                    else
+                    {
+                        //不超标
+                        datahome.warningistrue = "1";
+                    }
+                    #endregion
+
                     if (!string.IsNullOrWhiteSpace(datahome.devicedate))
                     {
                         ls_datahomes.Add(datahome);//增加一行数据
+                        if (datahome.warnState=="1"||datahome.warningistrue!="1")
+                        {
+                            ls_warndatas.Add(datahome);
 
-                        dataClassLib.sqlOperation.insertIntoDataHome(ls_datahomes);
+                        }
+
+
+                        //dataClassLib.sqlOperation.insertIntoDataHome(ls_datahomes,ls_warndatas);
+                        //ls_datahomes.Clear();
+                        //ls_warndatas.Clear();
                     }
                     else {
                         MessageBox.Show("已经到最后一行：" + i.ToString());break; ; }
@@ -253,6 +333,10 @@ namespace UpdateAndDelForm
 
 
                 }
+                //批量插入
+                dataClassLib.sqlOperation.insertIntoDataHome(ls_datahomes,ls_warndatas);
+                ls_datahomes.Clear();
+                ls_warndatas.Clear();
             }
             return cedian;
         }
